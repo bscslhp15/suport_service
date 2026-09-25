@@ -1937,7 +1937,7 @@ $dashboardLink = $user['role'] === 'student' ? '../student_home.php' : ($user['r
             }
 
             try {
-                const response = await fetch('/THESIS/SUPPORTSERVICESYSTEM/includes/api_ssc_feedback.php', {
+                const response = await fetch('../../includes/api_ssc_feedback.php', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

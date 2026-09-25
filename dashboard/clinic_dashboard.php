@@ -2625,7 +2625,7 @@ $servicesOpen = in_array($currentPage, ['guidance_home.php', 'nurse_home.php', '
             }
 
             try {
-                const response = await fetch('/THESIS/SUPPORTSERVICESYSTEM/includes/api_clinic_feedback.php', {
+                const response = await fetch('../includes/api_clinic_feedback.php', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({

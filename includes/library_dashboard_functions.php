@@ -52,3 +52,44 @@ function get_user_course_category(int $userId): ?string {
     }
     return $user['course_year'] ?? $user['course'] ?? null;
 }
+
+function save_library_feedback(array $data): bool {
+    $pdo = get_db();
+    $lookup = $pdo->prepare(
+        'SELECT id FROM library_feedback WHERE borrow_id = :borrow_id AND user_id = :user_id LIMIT 1'
+    );
+    $lookup->execute([
+        'borrow_id' => (int) $data['borrow_id'],
+        'user_id' => (int) $data['user_id'],
+    ]);
+    $feedbackId = $lookup->fetchColumn();
+
+    $values = [
+        'borrow_id' => (int) $data['borrow_id'],
+        'user_id' => (int) $data['user_id'],
+        'book_id' => (int) $data['book_id'],
+        'rating' => (int) $data['book_rating'],
+        'book_rating' => (int) $data['book_rating'],
+        'service_rating' => (int) $data['service_rating'],
+        'book_review' => trim((string) ($data['book_review'] ?? '')),
+        'service_feedback' => trim((string) ($data['service_feedback'] ?? '')),
+    ];
+
+    if ($feedbackId) {
+        $stmt = $pdo->prepare(
+            'UPDATE library_feedback
+             SET book_rating = :book_rating, service_rating = :service_rating,
+                 rating = :rating, book_review = :book_review, service_feedback = :service_feedback
+             WHERE id = :id'
+        );
+        $values['id'] = (int) $feedbackId;
+    } else {
+        $stmt = $pdo->prepare(
+            'INSERT INTO library_feedback
+             (borrow_id, user_id, book_id, rating, book_rating, service_rating, book_review, service_feedback, created_at)
+             VALUES (:borrow_id, :user_id, :book_id, :rating, :book_rating, :service_rating, :book_review, :service_feedback, NOW())'
+        );
+    }
+
+    return $stmt->execute($values);
+}

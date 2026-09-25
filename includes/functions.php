@@ -796,6 +796,7 @@ function ensure_guidance_schema(): void {
             reported_student_id INT UNSIGNED NOT NULL,
             reporter_user_id INT UNSIGNED DEFAULT NULL,
             created_by INT UNSIGNED DEFAULT NULL,
+            case_type VARCHAR(100) DEFAULT NULL,
             reporter_role ENUM(\'student\',\'teacher\') NOT NULL,
             report_type ENUM(\'student_report\',\'teacher_report\',\'self_request\',\'other\') NOT NULL DEFAULT \'student_report\',
             type_of_concern VARCHAR(100) NOT NULL,
@@ -829,6 +830,12 @@ function ensure_guidance_schema(): void {
 
     try {
         add_column_if_missing($pdo, 'guidance_cases', 'created_by', 'INT UNSIGNED DEFAULT NULL');
+    } catch (Exception $e) {
+        // Ignore if the column already exists or the migration is not applicable.
+    }
+
+    try {
+        add_column_if_missing($pdo, 'guidance_cases', 'case_type', 'VARCHAR(100) DEFAULT NULL');
     } catch (Exception $e) {
         // Ignore if the column already exists or the migration is not applicable.
     }
@@ -1013,13 +1020,14 @@ function table_has_column(string $tableName, string $columnName): bool {
 function create_guidance_case(array $data): ?int {
     $pdo = get_db();
     $stmt = $pdo->prepare(
-        'INSERT INTO guidance_cases (case_number, reported_student_id, reporter_user_id, created_by, reporter_role, report_type, type_of_concern, course_year, incident_description, parent_guardian_notified, teacher_awareness_required, priority_level) VALUES (:case_number, :reported_student_id, :reporter_user_id, :created_by, :reporter_role, :report_type, :type_of_concern, :course_year, :incident_description, :parent_guardian_notified, :teacher_awareness_required, :priority_level)'
+        'INSERT INTO guidance_cases (case_number, reported_student_id, reporter_user_id, created_by, case_type, reporter_role, report_type, type_of_concern, course_year, incident_description, parent_guardian_notified, teacher_awareness_required, priority_level) VALUES (:case_number, :reported_student_id, :reporter_user_id, :created_by, :case_type, :reporter_role, :report_type, :type_of_concern, :course_year, :incident_description, :parent_guardian_notified, :teacher_awareness_required, :priority_level)'
     );
     $success = $stmt->execute([
         'case_number' => $data['case_number'],
         'reported_student_id' => $data['reported_student_id'],
         'reporter_user_id' => $data['reporter_user_id'],
         'created_by' => $data['created_by'] ?? $data['reporter_user_id'],
+        'case_type' => $data['case_type'] ?? $data['report_type'] ?? 'counseling',
         'reporter_role' => $data['reporter_role'],
         'report_type' => $data['report_type'],
         'type_of_concern' => $data['type_of_concern'],
@@ -2010,7 +2018,9 @@ function borrow_book(int $userId, int $bookId, string $borrowDate, string $dueDa
     try {
         $book = get_library_book_by_id($bookId);
         if (!$book || $book['available_copies'] <= 0) {
-            $pdo->rollBack();
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             return false;
         }
         $newCopies = max(0, $book['available_copies'] - 1);
@@ -2031,7 +2041,9 @@ function borrow_book(int $userId, int $bookId, string $borrowDate, string $dueDa
         $pdo->commit();
         return true;
     } catch (Exception $ex) {
-        $pdo->rollBack();
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
         return false;
     }
 }
