@@ -2,18 +2,23 @@
 .env.*
 !.env.example
 
-# Local/runtime files
+# Runtime and local files
 *.log
-logs/*
+logs/
 announcement_api.log
 approval_debug.log
 temp_output.txt
+.vscode/
 
-# User-uploaded files should use persistent/object storage in production
+# User uploads and generated output
 uploads/*
 !uploads/.gitkeep
+OUTPUT/
 
-# Local editor and OS files
-.vscode/settings.json
-.DS_Store
-Thumbs.db
+# Local diagnostic and test scripts
+check_*.php
+debug_*.php
+test_*.php
+verify_*.php
+fix_*.php
+create_test_*.php

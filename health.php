@@ -1,2 +1,3 @@
 <?php
-echo 'PHP is working';
+header('Content-Type: text/plain; charset=utf-8');
+echo 'ok';

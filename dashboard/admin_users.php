@@ -855,8 +855,20 @@ $usersStmt = $pdo->query("SELECT id, full_name, email, role, head_service, stude
 $users = $usersStmt->fetchAll();
 $studentStatement = $pdo->query("SELECT id, full_name, email, role, course_year, student_id, employee_id, created_at FROM users WHERE role IN ('student','teacher') AND (is_archived = 0 OR is_archived IS NULL) ORDER BY role, full_name");
 $studentList = $studentStatement->fetchAll();
-$pendingStatement = $pdo->query("SELECT id, full_name, email, student_id, course_year, documents, status, created_at FROM pending_student_registrations WHERE status = 'pending_admin' ORDER BY created_at ASC");
+$pendingStatement = $pdo->query("SELECT id, full_name, email, student_id, course_year, documents, status, created_at, updated_at FROM pending_student_registrations WHERE status = 'pending_admin' ORDER BY updated_at ASC, created_at ASC");
 $pendingRegistrations = $pendingStatement->fetchAll();
+
+function format_pending_approval_datetime(?string $datetime): string {
+    if (empty($datetime)) {
+        return 'Not available';
+    }
+
+    try {
+        return (new DateTimeImmutable($datetime, new DateTimeZone('Asia/Manila')))->format('F j, Y \\a\\t g:i A');
+    } catch (Exception $e) {
+        return 'Not available';
+    }
+}
 
 $courseOptions = [
     'Bachelor of Science in Accountancy',
@@ -2585,10 +2597,6 @@ $associateYearOptions = ['1', '2'];
                             <?php else: ?>
                                 <div class="pending-approvals-grid">
                                     <?php foreach ($pendingRegistrations as $pending): ?>
-                                        <?php
-                                            $applicationDate = new DateTimeImmutable((string) $pending['created_at'], new DateTimeZone('UTC'));
-                                            $applicationDate = $applicationDate->setTimezone(new DateTimeZone('Asia/Manila'));
-                                        ?>
                                         <div class="approval-card">
                                             <div class="approval-card-header">
                                                 <div class="applicant-info">
@@ -2624,9 +2632,9 @@ $associateYearOptions = ['1', '2'];
                                                         </span>
                                                     </div>
                                                     <div class="detail-row">
-                                                        <span class="detail-label">Application Date:</span>
+                                                        <span class="detail-label">Pending Since:</span>
                                                         <span class="detail-value">
-                                                            <?= htmlspecialchars($applicationDate->format('F j, Y \a\t g:i A')) ?>
+                                                            <?= htmlspecialchars(format_pending_approval_datetime($pending['updated_at'] ?? $pending['created_at'] ?? null)) ?>
                                                         </span>
                                                     </div>
                                                 </div>

@@ -217,12 +217,12 @@ function detectModule($message) {
 
 function getModuleGeneralResponse($module, $faqData) {
     $responses = [
-          'library' => "I'd be happy to help you with library services! PASS College has a comprehensive library system where you can reserve and borrow books, access digital resources, check your borrowing history, and make library visit reservations. You can access the <a href='/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Library module</a> from your dashboard.",
-          'clinic' => "PASS College Clinic provides comprehensive health services including daily health tracking, medical consultations, clinic visit records, and health announcements. Access the <a href='/dashboard/clinic_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Clinic module</a> from your dashboard.",
-          'scholarship' => "For scholarship information, PASS College offers scholarship announcements, application tracking, and document checklist management. Check the <a href='/dashboard/scholarship/scholarship_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Scholarship module</a> on your dashboard. Note that scholarship applications involve physical document verification.",
-          'guidance' => "For guidance and counseling services, PASS College offers personal counseling appointments, academic advising, career guidance, and incident reporting. You can access the <a href='/dashboard/guidance_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Guidance module</a> from your dashboard.",
-          'ssc' => "The Supreme Student Council (SSC) handles student activities and events, leadership programs, student initiatives, and election management. Visit the <a href='/dashboard/ssc/' style='color: #2563eb; text-decoration: underline;'>SSC module</a> on your dashboard.",
-          'ssaa' => "The Student Support & Alumni Affairs (SSAA) provides alumni network connections, career development support, graduate employment tracking, and long-term student lifecycle support. Access the <a href='/dashboard/alumni.php' style='color: #2563eb; text-decoration: underline;'>Alumni module</a> from your dashboard."
+        'library' => "I'd be happy to help you with library services! PASS College has a comprehensive library system where you can reserve and borrow books, access digital resources, check your borrowing history, and make library visit reservations. You can access the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Library module</a> from your dashboard.",
+        'clinic' => "PASS College Clinic provides comprehensive health services including daily health tracking, medical consultations, clinic visit records, and health announcements. Access the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/clinic_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Clinic module</a> from your dashboard.",
+        'scholarship' => "For scholarship information, PASS College offers scholarship announcements, application tracking, and document checklist management. Check the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/scholarship/scholarship_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Scholarship module</a> on your dashboard. Note that scholarship applications involve physical document verification.",
+        'guidance' => "For guidance and counseling services, PASS College offers personal counseling appointments, academic advising, career guidance, and incident reporting. You can access the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/guidance_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Guidance module</a> from your dashboard.",
+        'ssc' => "The Supreme Student Council (SSC) handles student activities and events, leadership programs, student initiatives, and election management. Visit the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/ssc/' style='color: #2563eb; text-decoration: underline;'>SSC module</a> on your dashboard.",
+        'ssaa' => "The Student Support & Alumni Affairs (SSAA) provides alumni network connections, career development support, graduate employment tracking, and long-term student lifecycle support. Access the <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/alumni.php' style='color: #2563eb; text-decoration: underline;'>Alumni module</a> from your dashboard."
     ];
 
     $response = $responses[$module] ?? "I'm here to help with PASS College services. Could you please specify what you'd like to know about?";
@@ -284,8 +284,7 @@ function getSystemDataResponse($queryType, $userId) {
         case 'clearance_status':
             $clearanceStatus = can_student_get_clearance($userId);
             if ($clearanceStatus['can_clear']) {
-                return "Your clearance status is **Eligible** ✓. You have no outstanding fines or overdue books. You can request your clearance from the Library module at: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Request clearance</a>";
-                            return "Your clearance status is **Eligible** ✓. You have no outstanding fines or overdue books. You can request your clearance from the Library module at: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Request clearance</a>";
+                return "Your clearance status is **Eligible** ✓. You have no outstanding fines or overdue books. You can request your clearance from the Library module at: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Request clearance</a>";
             } else {
                 $response = "Your clearance status is **Blocked** ✗. " . $clearanceStatus['reason'] . ".\n\n";
                 if ($clearanceStatus['unpaid_fines'] > 0) {
@@ -294,8 +293,7 @@ function getSystemDataResponse($queryType, $userId) {
                 if ($clearanceStatus['overdue_count'] > 0) {
                     $response .= "- **Overdue books**: " . $clearanceStatus['overdue_count'] . " item(s)\n";
                 }
-                $response .= "\nPlease settle these issues before requesting clearance. Visit: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
-                                $response .= "\nPlease settle these issues before requesting clearance. Visit: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
+                $response .= "\nPlease settle these issues before requesting clearance. Visit: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
                 return $response;
             }
 
@@ -312,8 +310,7 @@ function getSystemDataResponse($queryType, $userId) {
                 foreach ($fines as $fine) {
                     $response .= "- **" . $fine['description'] . "**: ₱" . number_format($fine['amount'], 2) . "\n";
                 }
-                $response .= "\nPlease pay these fines at the library to clear your account. Visit: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
-                                $response .= "\nPlease pay these fines at the library to clear your account. Visit: <a href='/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
+                $response .= "\nPlease pay these fines at the library to clear your account. Visit: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/clearance.php' style='color: #2563eb; text-decoration: underline;'>Clearance page</a>";
                 return $response;
             }
 
@@ -325,11 +322,9 @@ function getSystemDataResponse($queryType, $userId) {
             $maxReservations = 3;
 
             if ($activeCount >= $maxReservations) {
-                return "You currently have **" . $activeCount . "** active reservations, which is the maximum allowed (" . $maxReservations . "). You cannot make new reservations until some are fulfilled or expire. Check your reservations at: <a href='/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>My Library Reservations</a>";
-                            return "You currently have **" . $activeCount . "** active reservations, which is the maximum allowed (" . $maxReservations . "). You cannot make new reservations until some are fulfilled or expire. Check your reservations at: <a href='/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>My Library Reservations</a>";
+                return "You currently have **" . $activeCount . "** active reservations, which is the maximum allowed (" . $maxReservations . "). You cannot make new reservations until some are fulfilled or expire. Check your reservations at: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>My Library Reservations</a>";
             } else {
-                return "You have **" . $activeCount . "** active reservations out of a maximum of " . $maxReservations . ". You can still make new reservations. Visit the Library module at: <a href='/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Library Dashboard</a>";
-                            return "You have **" . $activeCount . "** active reservations out of a maximum of " . $maxReservations . ". You can still make new reservations. Visit the Library module at: <a href='/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Library Dashboard</a>";
+                return "You have **" . $activeCount . "** active reservations out of a maximum of " . $maxReservations . ". You can still make new reservations. Visit the Library module at: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/library_dashboard.php' style='color: #2563eb; text-decoration: underline;'>Library Dashboard</a>";
             }
 
         case 'eresource_access':
@@ -347,8 +342,7 @@ function getSystemDataResponse($queryType, $userId) {
             if (empty($resources)) {
                 return "No e-resources are currently available for your course (**" . $userCourse . "**). Resources are restricted to your specific course materials. Contact the library staff if you believe this is an error.";
             } else {
-                return "You have access to **" . count($resources) . "** e-resources for your course (**" . $userCourse . "**). If you're not seeing certain modules, they may be restricted to other courses or not yet uploaded. Visit the E-Resources section at: <a href='/dashboard/library_e-resources.php' style='color: #2563eb; text-decoration: underline;'>E-Resources</a>";
-                            return "You have access to **" . count($resources) . "** e-resources for your course (**" . $userCourse . "**). If you're not seeing certain modules, they may be restricted to other courses or not yet uploaded. Visit the E-Resources section at: <a href='/dashboard/library_e-resources.php' style='color: #2563eb; text-decoration: underline;'>E-Resources</a>";
+                return "You have access to **" . count($resources) . "** e-resources for your course (**" . $userCourse . "**). If you're not seeing certain modules, they may be restricted to other courses or not yet uploaded. Visit the E-Resources section at: <a href='http://localhost/THESIS/SUPPORTSERVICESYSTEM/dashboard/library_e-resources.php' style='color: #2563eb; text-decoration: underline;'>E-Resources</a>";
             }
 
         default:

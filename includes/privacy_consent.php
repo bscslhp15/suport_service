@@ -6,25 +6,24 @@
         display: none;
         align-items: center;
         justify-content: center;
-        padding: 12px;
+        padding: 20px;
         background: rgba(15, 23, 42, 0.68);
-        overflow: hidden;
+        overscroll-behavior: contain;
     }
     .privacy-consent-modal.is-open {
         display: flex;
     }
     .privacy-consent-dialog {
         box-sizing: border-box;
-        width: min(680px, calc(100vw - 24px));
+        width: min(680px, 100%);
         min-width: 0;
-        max-height: min(760px, calc(100dvh - 24px));
+        max-height: min(760px, calc(100dvh - 40px));
         overflow-y: auto;
-        padding: clamp(16px, 3vw, 28px);
+        padding: 28px;
         border-radius: 18px;
         background: #ffffff;
         color: #1f2937;
         box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
-        overscroll-behavior: contain;
     }
     .privacy-consent-dialog h2 {
         margin: 0 0 8px;
@@ -37,8 +36,8 @@
         line-height: 1.55;
     }
     .privacy-consent-section {
-        margin: 14px 0;
         min-width: 0;
+        margin: 14px 0;
         padding: 15px;
         border: 1px solid #e2e8f0;
         border-radius: 12px;
@@ -54,30 +53,29 @@
         color: #475569;
         font-size: 0.9rem;
         line-height: 1.55;
+        overflow-wrap: anywhere;
     }
     .privacy-consent-check {
-        display: grid;
-        grid-template-columns: 18px minmax(0, 1fr);
+        display: flex;
         align-items: flex-start;
         gap: 10px;
-        width: 100%;
-        min-width: 0;
         margin-top: 12px;
         color: #1f2937;
         font-size: 0.92rem;
         line-height: 1.45;
         cursor: pointer;
     }
+    .privacy-consent-check span {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
     .privacy-consent-check input {
-        width: 18px;
-        height: 18px;
+        width: 18px !important;
+        height: 18px !important;
         flex: 0 0 auto;
         margin-top: 2px;
         accent-color: #800000;
-    }
-    .privacy-consent-check span {
-        min-width: 0;
-        overflow-wrap: anywhere;
     }
     .privacy-consent-error {
         min-height: 20px;
@@ -109,13 +107,11 @@
     }
     @media (max-width: 520px) {
         .privacy-consent-modal {
-            padding: 8px;
+            padding: 12px;
         }
         .privacy-consent-dialog {
-            width: min(100%, calc(100vw - 16px));
-            max-height: calc(100dvh - 16px);
-            padding: 16px;
-            border-radius: 14px;
+            max-height: calc(100dvh - 24px);
+            padding: 21px;
         }
         .privacy-consent-actions {
             flex-direction: column-reverse;
