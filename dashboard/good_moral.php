@@ -169,11 +169,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['generate_gmc'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hold_request'])) {
     $studentId = (int)($_POST['student_id'] ?? 0);
     if ($studentId > 0) {
-        // Mark or create a record with status 'on_hold'
+        // Use enum values supported by the imported Railway schema.
         $stmt = $pdo->prepare("
-            INSERT INTO good_moral_records (student_id, issued_by, status, created_at)
-            VALUES (?, ?, 'on_hold', NOW())
-            ON DUPLICATE KEY UPDATE status = 'on_hold', issued_by = ?, updated_at = NOW()
+            INSERT INTO good_moral_records (student_id, issued_by, status, notification_status, created_at)
+            VALUES (?, ?, 'flagged', 'hold', NOW())
+            ON DUPLICATE KEY UPDATE status = 'flagged', notification_status = 'hold', issued_by = ?, updated_at = NOW()
         ");
         $stmt->execute([$studentId, $user['id'], $user['id']]);
 

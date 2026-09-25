@@ -11,8 +11,6 @@ if ($user['role'] !== 'teacher' || $user['head_service'] !== 'guidance') {
 require_once __DIR__ . '/../includes/functions.php';
 ensure_guidance_schema();
 
-require_once __DIR__ . '/../AI CHAT BOT/chat_widget.php';
-
 $pdo = get_db();
 $message = '';
 $messageType = 'success';
@@ -1032,7 +1030,7 @@ $recentActivity = array_filter($allCases, fn($c) => $c['status'] === 'escalated'
 
         // Load feedback for case management
         function loadCaseManagementFeedback() {
-            fetch('/THESIS/SUPPORTSERVICESYSTEM/includes/api_guidance_feedback.php', {
+            fetch('../includes/api_guidance_feedback.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -1130,7 +1128,7 @@ $recentActivity = array_filter($allCases, fn($c) => $c['status'] === 'escalated'
 
         // Load Good Moral feedback from API
         function loadGoodMoralFeedback() {
-            fetch('/THESIS/SUPPORTSERVICESYSTEM/includes/api_good_moral_feedback.php', {
+            fetch('../includes/api_good_moral_feedback.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
@@ -3325,5 +3323,6 @@ $recentActivity = array_filter($allCases, fn($c) => $c['status'] === 'escalated'
             }
         });
     </script>
+<?php include __DIR__ . '/../AI CHAT BOT/chat_widget.php'; ?>
 </body>
 </html>

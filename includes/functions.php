@@ -797,6 +797,7 @@ function ensure_guidance_schema(): void {
             reporter_user_id INT UNSIGNED DEFAULT NULL,
             created_by INT UNSIGNED DEFAULT NULL,
             case_type VARCHAR(100) DEFAULT NULL,
+            case_topic VARCHAR(255) DEFAULT NULL,
             reporter_role ENUM(\'student\',\'teacher\') NOT NULL,
             report_type ENUM(\'student_report\',\'teacher_report\',\'self_request\',\'other\') NOT NULL DEFAULT \'student_report\',
             type_of_concern VARCHAR(100) NOT NULL,
@@ -836,6 +837,12 @@ function ensure_guidance_schema(): void {
 
     try {
         add_column_if_missing($pdo, 'guidance_cases', 'case_type', 'VARCHAR(100) DEFAULT NULL');
+    } catch (Exception $e) {
+        // Ignore if the column already exists or the migration is not applicable.
+    }
+
+    try {
+        add_column_if_missing($pdo, 'guidance_cases', 'case_topic', 'VARCHAR(255) DEFAULT NULL');
     } catch (Exception $e) {
         // Ignore if the column already exists or the migration is not applicable.
     }
@@ -1020,7 +1027,7 @@ function table_has_column(string $tableName, string $columnName): bool {
 function create_guidance_case(array $data): ?int {
     $pdo = get_db();
     $stmt = $pdo->prepare(
-        'INSERT INTO guidance_cases (case_number, reported_student_id, reporter_user_id, created_by, case_type, reporter_role, report_type, type_of_concern, course_year, incident_description, parent_guardian_notified, teacher_awareness_required, priority_level) VALUES (:case_number, :reported_student_id, :reporter_user_id, :created_by, :case_type, :reporter_role, :report_type, :type_of_concern, :course_year, :incident_description, :parent_guardian_notified, :teacher_awareness_required, :priority_level)'
+        'INSERT INTO guidance_cases (case_number, reported_student_id, reporter_user_id, created_by, case_type, case_topic, reporter_role, report_type, type_of_concern, course_year, incident_description, parent_guardian_notified, teacher_awareness_required, priority_level) VALUES (:case_number, :reported_student_id, :reporter_user_id, :created_by, :case_type, :case_topic, :reporter_role, :report_type, :type_of_concern, :course_year, :incident_description, :parent_guardian_notified, :teacher_awareness_required, :priority_level)'
     );
     $success = $stmt->execute([
         'case_number' => $data['case_number'],
@@ -1028,6 +1035,7 @@ function create_guidance_case(array $data): ?int {
         'reporter_user_id' => $data['reporter_user_id'],
         'created_by' => $data['created_by'] ?? $data['reporter_user_id'],
         'case_type' => $data['case_type'] ?? $data['report_type'] ?? 'counseling',
+        'case_topic' => $data['case_topic'] ?? $data['type_of_concern'],
         'reporter_role' => $data['reporter_role'],
         'report_type' => $data['report_type'],
         'type_of_concern' => $data['type_of_concern'],
@@ -1173,6 +1181,14 @@ function get_guidance_sessions_for_case(int $caseId): array {
 
 function add_guidance_session(array $data): bool {
     $pdo = get_db();
+    $participationScope = strtolower(trim((string)($data['participation_scope'] ?? '')));
+    if (str_contains($participationScope, 'parent')) {
+        $participationScope = 'with_parent_guardian';
+    } elseif (str_contains($participationScope, 'teacher')) {
+        $participationScope = 'with_teacher_awareness';
+    } else {
+        $participationScope = 'student_only';
+    }
     $usesSeparateTime = table_has_column('guidance_sessions', 'session_time');
 
     if ($usesSeparateTime) {
@@ -1193,7 +1209,7 @@ function add_guidance_session(array $data): bool {
             'session_date' => $sessionDate,
             'session_time' => $sessionTime,
             'session_category' => $data['session_category'],
-            'participation_scope' => $data['participation_scope'],
+            'participation_scope' => $participationScope,
             'attendance_status' => $data['attendance_status'],
             'notes' => $data['notes'],
         ]);
@@ -1207,7 +1223,7 @@ function add_guidance_session(array $data): bool {
         'counselor_id' => $data['counselor_id'],
         'session_date' => $data['session_date'],
         'session_category' => $data['session_category'],
-        'participation_scope' => $data['participation_scope'],
+        'participation_scope' => $participationScope,
         'attendance_status' => $data['attendance_status'],
         'notes' => $data['notes'],
     ]);

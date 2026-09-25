@@ -1,4 +1,8 @@
 <?php
+if (ob_get_level() === 0) {
+    ob_start();
+}
+
 $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
 $dashboardPosition = strpos($requestPath, '/dashboard/');
 $chatBasePath = $dashboardPosition === false ? '' : substr($requestPath, 0, $dashboardPosition);
